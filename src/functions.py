@@ -2,14 +2,18 @@ import datetime
 import json
 
 def load_file(file_name):
-    """Достает данные из файла json"""
+    """Достает данные из файла json в список"""
     with open(file_name, 'r', encoding='utf-8') as file:
         a = json.load(file)
         return a
 
-def created_list (list):
+def created_list (list_):
+    """Создает из данных файла массив (список словарей) с нужными полями
+     пустые словари и словари с ключом 'stste' отличным от EXECUTED игнорируются
+     поле 'data' преобразуется в формат datatime
+     отсутсвие поля 'from' ищет по виду операции 'открытие вклада'"""
     normal_list=[]
-    for i in list:
+    for i in list_:
         if len(i) !=0 and i['state'] == "EXECUTED":
             dic = {}
             dic['date'] = datetime.datetime.strptime(i['date'], '%Y-%m-%dT%H:%M:%S.%f')
@@ -26,6 +30,10 @@ def created_list (list):
     return normal_list
 
 def output_mask (str_in):
+    """Преобразует строку с номером карты/счета в необходимый вид для вывода:
+    маска для карты: 'CARD NAME 1234 56** **** 7891
+    маска для счета: 'Счет **1234
+    в случае отсутсвия значения (поле from) для печати возвращает '' (ничего)"""
     if str_in == None:
         return ''
     else:
